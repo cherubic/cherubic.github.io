@@ -7,7 +7,18 @@ disqus_shortname: stackproblems
 google_analytics: G-02ZMEHPSL5
 
 enableTags: true
-tagarray: ["python"]
+tagarray: 
+  - "golang"
+  - "python"
+  - "shell"
+  - "tool"
+  - "translate"
+  - "vim plugin"
+  - "vim"
+  - "多线程"
+  - "工具"
+  - "文本编辑器"
+  - "翻译"
 
 collections: {}
 
