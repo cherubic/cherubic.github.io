@@ -21,6 +21,7 @@ jobs:
     strategy:
       matrix:
         ruby: [3.2]
+        node: [18]
 
     steps:
       - name: Checkout
@@ -36,6 +37,8 @@ jobs:
 
       - name: Setup Node
         uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
 
       - name: Build Assets
         run: npm i && npm run build
