@@ -1,8 +1,11 @@
 ---
-layout: post
 title:  "python中Lock与RLock的区别"
-date:   2021-04-11 23:48:00 +0800
-categories: [python, 多线程]
+author: xander
+date: 2021-04-11 23:48:00 +0800
+categories: ["language", "python"]
+tags: ["multithread", "python"]
+math: true
+mermaid: true
 ---
 
 ## Lock vs RLock 简单对比
