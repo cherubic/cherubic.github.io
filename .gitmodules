@@ -1,3 +1,4 @@
 [submodule "assets/lib"]
 	path = assets/lib
 	url = git@github.com:cherubic/chirpy-static-assets.git
+	branch = main
