@@ -113,6 +113,12 @@ tail_includes:
           class="post-tag no-text-decoration" >
         {{- tag -}}
       </a>
+      {% if site.data.locales[site.lang].tag_names[tag] %}
+      <a href="{{ site.baseurl }}/tags/{{ tag | slugify | url_encode }}/"
+          class="post-tag no-text-decoration" >
+        {{- site.data.locales[site.lang].tag_names[tag] -}}
+      </a>
+      {% endif %}
       {% endfor %}
   </div>
   {% endif %}
