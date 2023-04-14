@@ -20,10 +20,12 @@ timezone: Asia/Shanghai
 
 title: xander's blog # the main title
 
-tagline: "世界上只有一种真正的英雄主义，就是认清了生活的真相后还依然热爱它" # it will display as the sub-title
+tagline: "世界上只有一种真正的英雄主义，就是认清了生活的真相后还依然热爱它。" # it will display as the sub-title
 
-description: >- # used by seo meta and the atom feed
-  尝试用文字来解构。
+description: >-
+  xander的技术博客 -- 分享关于编程、Web 开发、人工智能、云计算等技术领域的知识、心得和实践经验，致力于帮助开发者提高技能和解决问题。
+  xander's blog -- share knowledge, experience and practice in the field of programming, web development, artificial intelligence, cloud computing, etc., and strive to help developers improve their skills and solve problems.
+
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: "https://xandersu.com"
