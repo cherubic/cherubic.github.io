@@ -88,6 +88,7 @@ tag_names:
   editor: 文本编辑器
   tool: 工具
   translate: 翻译
+  network: 网络
 
 category_names:
   language: 编程语言
