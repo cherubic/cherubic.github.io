@@ -3,7 +3,7 @@ layout: post
 title:  "[翻译]CNCF Operator 白皮书 - 最终版本"
 date:   Thu Jul 6 15:01:51 2023 +0800
 categories: ["kubernetes", "operator"]
-tags: ["translate"]
+tags: ["translate", "kubernetes", "operator"]
 ---
 
 refer: [CNCF Operator White Paper - Review Version](https://github.com/cncf/tag-app-delivery/blob/163962c4b1cd70d085107fc579e3e04c2e14d59c/operator-whitepaper/v1/Operator-WhitePaper_v1-0.md)
