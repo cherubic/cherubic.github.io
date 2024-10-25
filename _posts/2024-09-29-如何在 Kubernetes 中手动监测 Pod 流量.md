@@ -30,6 +30,7 @@ tags: [kubernetes, docker, network, containerd]
 工具概览：
 
 1. `tcpdump`: 一个网络抓包工具，可以用来抓取网络数据包，分析网络问题。
+2. `nsenter`: 一个进入到指定的命名空间的工具，可以用来进入到容器的网络命名空间，查看容器的网络信息。
 
 ### 最终解决方案
 
@@ -44,7 +45,7 @@ tags: [kubernetes, docker, network, containerd]
 ```bash
 # 获取 Pod 所在节点和 PID
 kubectl get pod -n <namespace> -o wide
-kubectl get pod <pod-name> -n <namespace> -o json | jq '.status.containerStatuses[0].containerID' | cut -d '/' -f 3 | cut -d '"' -f 1
+kubectl get pod <pod-name> -n $  -o jsonpath='{.status.containerStatuses[0].containerID}' | cut -d '/' -f 3
 docker inspect <container-id> | jq '.[0].State.Pid'
 # 在节点上找到 PID 对应的网络接口
 nsenter -t <PID> -n ip addr | grep eth0@ | cut -d ':' -f 2 | sed 's/eth0@if//g' 
@@ -53,6 +54,16 @@ ip a | grep <network-index> | cut -d ':' -f 2 | cut -d '@' -f 1
 tcpdump -i <network-name> -w <output-file>
 ```
 
+完整代码可以参考 **代码地址**：[monitor-pod-net](https://github.com/cherubic/blogcode/tree/main/monitor-pod-net)
+
 ## 总结
 
 本文介绍了如何在 Kubernetes 中手动监测 Pod 流量的操作步骤，适用于受限于工具引入的环境。我们通过了解 Kubernetes 的网络模型、容器通信方式及 Linux 命名空间，结合 `tcpdump` 工具，实现在不改变镜像和不干扰容器的情况下对 Pod 流量进行分析。这种手动流量监测方式简单实用，适合于集群中网络异常排查等场景。
+
+## 参考
+
+- [Kubernetes 网络模型](https://kubernetes.io/zh/docs/concepts/cluster-administration/networking/)
+- [Linux cgroup 命名空间](https://man7.org/linux/man-pages/man7/cgroup_namespaces.7.html)
+- [tcpdump 使用文档](https://www.tcpdump.org/manpages/tcpdump.1.html)
+- [nsenter 使用文档](https://man7.org/linux/man-pages/man1/nsenter.1.html)
+- [Docker 容器网络模型](https://docs.docker.com/network/)
