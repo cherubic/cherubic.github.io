@@ -6,8 +6,6 @@ categories: ["golang", "faq"]
 tags: [golang, faq]
 ---
 
-# Golang 工具链 get/mod tidy 问题
-
 ## 问题描述
 
 在使用 go get 或者 go mod tidy 时，出现以下错误：
