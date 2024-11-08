@@ -75,9 +75,9 @@ create zip: module source tree too large
 
     // src/cmd/go/internal/modfetch/proxy.go
     func (p *proxyRepo) Zip(dst io.Writer, version string) error {
-        。。。
+        ...
         lr := &io.LimitedReader{R: body, N: codehost.MaxZipFile + 1}
-        。。。
+        ...
     }
 
     // src/cmd/go/internal/modfetch/codehost/codehost.go
