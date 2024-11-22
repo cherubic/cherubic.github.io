@@ -89,9 +89,11 @@ tag_names:
   tool: 工具
   translate: 翻译
   network: 网络
+  "concurrent programming": 并发编程
 
 category_names:
   language: 编程语言
   tool: 工具
   editor: 文本编辑器
   foundation: 基本原理
+  "concurrent programming": 并发编程
