@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "[译]MapReduce: 简化大型集群上的数据处理"
-date: 2023-12-14 13:34:00 +0800
+date: 2024-11-22 13:34:00 +0800
 categories: ["language", "concurrent programming"]
 tags: ["translate", "concurrent programming"]
 ---
