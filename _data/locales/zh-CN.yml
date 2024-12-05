@@ -88,8 +88,10 @@ tag_names:
   editor: 文本编辑器
   tool: 工具
   translate: 翻译
+  foundation: 基本原理
   network: 网络
   "concurrent programming": 并发编程
+  devops: 开发运维
 
 category_names:
   language: 编程语言
@@ -97,3 +99,5 @@ category_names:
   editor: 文本编辑器
   foundation: 基本原理
   "concurrent programming": 并发编程
+  devops: 开发运维
+  network: 网络
