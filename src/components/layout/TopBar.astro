@@ -1,4 +1,5 @@
 ---
+import SearchPanel from '@components/ui/SearchPanel.astro';
 interface Props { currentPath: string; }
 const { currentPath } = Astro.props;
 
@@ -41,7 +42,7 @@ for (const seg of segments) {
 
   <!-- Search -->
   <div class="search-wrap">
-    <div class="search-box" id="search-trigger" role="button" tabindex="0" aria-label="搜索">
+    <div class="search-box" aria-label="搜索">
       <input
         type="text"
         id="search-input"
@@ -49,8 +50,10 @@ for (const seg of segments) {
         autocomplete="off"
         aria-autocomplete="list"
         aria-controls="search-panel"
+        aria-expanded="false"
       />
       <kbd class="search-kbd">⌘K</kbd>
     </div>
+    <SearchPanel />
   </div>
 </div>

@@ -1,58 +1,45 @@
 ---
-// SearchPanel — uses Pagefind JS API; all DOM construction avoids innerHTML
+// SearchPanel — inline dropdown, anchored to .search-wrap
 ---
 
-<div id="search-panel" class="search-panel" hidden role="dialog" aria-modal="true" aria-label="搜索">
-  <div class="search-panel-head">
-    <span>搜索结果</span>
-    <button id="search-close" class="search-close" aria-label="关闭搜索">Esc</button>
-  </div>
+<div id="search-panel" class="search-panel" hidden role="listbox" aria-label="搜索结果">
   <div id="search-results" class="search-results"></div>
-  <div class="search-panel-foot">
-    <span><kbd class="mini">↑↓</kbd> 导航</span>
-    <span><kbd class="mini">↵</kbd> 打开</span>
-    <span><kbd class="mini">Esc</kbd> 关闭</span>
-  </div>
+  <a id="search-all-link" href="/search" class="search-all-link" hidden>
+    查看全部结果 →
+  </a>
 </div>
 
 <script>
 (() => {
   const panel     = document.getElementById('search-panel') as HTMLElement | null;
   const resultsEl = document.getElementById('search-results') as HTMLElement | null;
+  const allLink   = document.getElementById('search-all-link') as HTMLAnchorElement | null;
   const input     = document.getElementById('search-input') as HTMLInputElement | null;
-  const closeBtn  = document.getElementById('search-close');
 
-  if (!panel || !resultsEl) return;
+  if (!panel || !resultsEl || !input) return;
 
-  function openPanel() {
-    panel!.removeAttribute('hidden');
-    input?.focus();
-  }
+  function openPanel() { panel!.removeAttribute('hidden'); }
   function closePanel() {
     panel!.setAttribute('hidden', '');
     clearResults();
   }
   function clearResults() {
     while (resultsEl!.firstChild) resultsEl!.removeChild(resultsEl!.firstChild);
+    allLink?.setAttribute('hidden', '');
   }
 
-  closeBtn?.addEventListener('click', closePanel);
-
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closePanel(); return; }
+    if (e.key === 'Escape') { closePanel(); input?.blur(); return; }
     if ((e.key === '/' || (e.key === 'k' && (e.metaKey || e.ctrlKey))) && !e.isComposing) {
       e.preventDefault();
-      openPanel();
+      input?.focus();
     }
   });
 
-  input?.addEventListener('click', openPanel);
-  document.getElementById('search-trigger')?.addEventListener('click', openPanel);
-
-  // Close when clicking outside the panel
   document.addEventListener('click', e => {
     const target = e.target as Node;
-    if (panel && !panel.hasAttribute('hidden') && !panel.contains(target) && target !== input) {
+    const wrap = input?.closest('.search-wrap');
+    if (panel && !panel.hasAttribute('hidden') && wrap && !wrap.contains(target)) {
       closePanel();
     }
   });
@@ -76,18 +63,9 @@
     const a = document.createElement('a');
     a.className = 'search-result';
     a.href = String(r.url ?? '/');
+    a.setAttribute('role', 'option');
 
     const meta = r.meta as Record<string, string> | undefined;
-
-    if (meta?.category) {
-      const metaDiv = document.createElement('div');
-      metaDiv.className = 'search-result-meta';
-      const catSpan = document.createElement('span');
-      catSpan.className = 'sr-cat';
-      catSpan.textContent = meta.category;
-      metaDiv.appendChild(catSpan);
-      a.appendChild(metaDiv);
-    }
 
     const titleDiv = document.createElement('div');
     titleDiv.className = 'search-result-title';
@@ -111,22 +89,36 @@
 
   let debounceTimer = 0;
 
-  input?.addEventListener('input', () => {
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) openPanel();
+  });
+
+  input.addEventListener('input', () => {
     clearTimeout(debounceTimer);
     debounceTimer = window.setTimeout(async () => {
-      const q = input!.value.trim();
+      const q = input.value.trim();
       clearResults();
-      if (!q) return;
+      if (!q) { closePanel(); return; }
       openPanel();
+
       const pf = await ensurePagefind();
       if (!pf) { resultsEl!.appendChild(buildEmptyNode(q)); return; }
+
       const res = await (pf.search as (q: string) => Promise<{ results: unknown[] }>)(q);
       const top = await Promise.all(
-        res.results.slice(0, 8).map((r: unknown) => (r as { data: () => Promise<Record<string, unknown>> }).data()),
+        res.results.slice(0, 6).map((r: unknown) => (r as { data: () => Promise<Record<string, unknown>> }).data()),
       );
-      if (top.length === 0) { resultsEl!.appendChild(buildEmptyNode(q)); return; }
-      top.forEach(r => resultsEl!.appendChild(buildResultNode(r)));
-    }, 200);
+
+      if (top.length === 0) {
+        resultsEl!.appendChild(buildEmptyNode(q));
+      } else {
+        top.forEach(r => resultsEl!.appendChild(buildResultNode(r)));
+        if (allLink) {
+          allLink.href = `/search?q=${encodeURIComponent(q)}`;
+          allLink.removeAttribute('hidden');
+        }
+      }
+    }, 150);
   });
 })();
 </script>

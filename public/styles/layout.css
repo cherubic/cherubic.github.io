@@ -162,7 +162,7 @@
   white-space: nowrap;
 }
 
-.search-wrap { position: relative; }
+.search-wrap { position: relative; flex-shrink: 0; }
 .search-box {
   display: flex; align-items: center;
   gap: 8px;

@@ -2,7 +2,6 @@
 import Sidebar from '@components/layout/Sidebar.astro';
 import TopBar from '@components/layout/TopBar.astro';
 import RightPanel from '@components/layout/RightPanel.astro';
-import SearchPanel from '@components/ui/SearchPanel.astro';
 import type { TocItem } from '@utils/toc';
 
 interface Props {
@@ -57,7 +56,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
     <main class="main">
       <TopBar currentPath={Astro.url.pathname} />
-      <SearchPanel />
 
       <div data-pagefind-body>
         <slot />
