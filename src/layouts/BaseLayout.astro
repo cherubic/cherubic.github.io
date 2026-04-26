@@ -1,0 +1,102 @@
+---
+import Sidebar from '@components/layout/Sidebar.astro';
+import TopBar from '@components/layout/TopBar.astro';
+import RightPanel from '@components/layout/RightPanel.astro';
+import type { TocItem } from '@utils/toc';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  toc?: TocItem[];
+}
+
+const { title, description = '', image, toc } = Astro.props;
+const siteName = "xander's blog";
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title === siteName ? siteName : `${title} · ${siteName}`}</title>
+  {description && <meta name="description" content={description} />}
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={title} />
+  {description && <meta property="og:description" content={description} />}
+  {image && <meta property="og:image" content={image} />}
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:type" content="website" />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title={siteName} href="/feed.xml" />
+
+  <!-- CSS — order matters: tokens first so variables are defined -->
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/layout.css" />
+  <link rel="stylesheet" href="/styles/content.css" />
+  <link rel="stylesheet" href="/styles/pages.css" />
+  <link rel="stylesheet" href="/styles/terminal.css" />
+
+  <!-- Anti-FOUC: set data-theme before first paint -->
+  <script is:inline>
+    (function () {
+      const stored = localStorage.getItem('theme');
+      const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = stored ?? preferred;
+    })();
+  </script>
+</head>
+<body>
+  <div class="app">
+    <Sidebar currentPath={Astro.url.pathname} />
+
+    <main class="main">
+      <TopBar currentPath={Astro.url.pathname} />
+
+      <div data-pagefind-body>
+        <slot />
+      </div>
+    </main>
+
+    <RightPanel toc={toc} />
+  </div>
+
+  <!-- Sidebar mobile toggle -->
+  <script>
+    const toggle = document.getElementById('mobile-toggle');
+    const sidebar = document.querySelector('.sidebar') as HTMLElement | null;
+    const scrim = document.querySelector('.sidebar-scrim') as HTMLElement | null;
+
+    function openSidebar() {
+      sidebar?.classList.add('open');
+      scrim?.classList.add('open');
+    }
+    function closeSidebar() {
+      sidebar?.classList.remove('open');
+      scrim?.classList.remove('open');
+    }
+
+    toggle?.addEventListener('click', openSidebar);
+    scrim?.addEventListener('click', closeSidebar);
+  </script>
+
+  <!-- Code block copy button -->
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('.codeblock-copy').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pre = btn.closest('.codeblock')?.querySelector('pre');
+        const text = pre?.textContent ?? '';
+        navigator.clipboard.writeText(text).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = 'copied!';
+          setTimeout(() => { btn.textContent = orig; }, 1500);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

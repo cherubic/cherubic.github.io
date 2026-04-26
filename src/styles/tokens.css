@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ------------------------------------------------------------
+   Design tokens — 无邪的博客
+   Technical-blog aesthetic: warm neutral, mono accents
+   ------------------------------------------------------------ */
+
+:root {
+  /* Type */
+  --font-sans: 'Inter', 'PingFang SC', 'Hiragino Sans GB', -apple-system, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+  --font-serif: 'Source Serif 4', 'Noto Serif SC', Georgia, serif;
+
+  /* Warm neutral palette (light) */
+  --bg:           #fafaf7;
+  --bg-soft:      #f2f1ec;
+  --bg-elevated:  #ffffff;
+  --surface:      #ffffff;
+  --border:       #e7e5de;
+  --border-soft:  #eeece6;
+  --rule:         #d8d6cf;
+
+  --ink:          #16150f;
+  --ink-soft:     #3a3831;
+  --muted:        #706c61;
+  --muted-2:      #9a958a;
+  --faint:        #c2bfb5;
+
+  --accent:       #16150f;          /* near-black accent */
+  --accent-soft:  #26241d;
+  --link:         #1f1d16;
+  --link-hover:   #000000;
+
+  /* Syntax (light) */
+  --s-bg:        #f5f4ef;
+  --s-chrome:    #edebe3;
+  --s-fg:        #2a2822;
+  --s-muted:     #8d8a7f;
+  --s-kw:        #7a2020;    /* deep red */
+  --s-str:       #3d5a2d;    /* olive green */
+  --s-fn:        #4a3b80;    /* muted violet */
+  --s-num:       #8b5a1a;    /* amber */
+  --s-com:       #a09b8c;    /* faint */
+
+  /* Shape */
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(20, 18, 12, 0.04);
+  --shadow: 0 2px 8px rgba(20, 18, 12, 0.06), 0 1px 2px rgba(20, 18, 12, 0.04);
+  --shadow-lg: 0 12px 40px rgba(20, 18, 12, 0.10), 0 2px 8px rgba(20, 18, 12, 0.06);
+
+  /* Layout */
+  --sidebar-w: 240px;
+  --right-w:   260px;
+  --max-w:    1440px;
+  --gutter:   28px;
+
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  --bg:           #0f0e0a;
+  --bg-soft:      #15140f;
+  --bg-elevated:  #1a1914;
+  --surface:      #16150f;
+  --border:       #2a2822;
+  --border-soft:  #23221c;
+  --rule:         #2f2d26;
+
+  --ink:          #ece9df;
+  --ink-soft:     #d2cec2;
+  --muted:        #8b8778;
+  --muted-2:      #6a6759;
+  --faint:        #4a4840;
+
+  --accent:       #ece9df;
+  --accent-soft:  #c9c5b7;
+  --link:         #ece9df;
+  --link-hover:   #ffffff;
+
+  --s-bg:         #15140f;
+  --s-chrome:     #1a1914;
+  --s-fg:         #d2cec2;
+  --s-muted:      #6e6a5d;
+  --s-kw:         #e07a7a;
+  --s-str:        #a8c38a;
+  --s-fn:         #b3a6e0;
+  --s-num:        #e0b478;
+  --s-com:        #5f5c52;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+
+  color-scheme: dark;
+}
+
+/* Base */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+a { color: var(--link); text-decoration: none; }
+a:hover { color: var(--link-hover); }
+
+::selection { background: var(--ink); color: var(--bg); }
+
+code, pre, kbd, samp { font-family: var(--font-mono); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--rule); }
+::-webkit-scrollbar-track { background: transparent; }

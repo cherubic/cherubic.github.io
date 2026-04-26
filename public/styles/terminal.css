@@ -1,0 +1,333 @@
+/* Terminal-flavor accents — layered on top of the base design */
+
+/* Brand: terminal prompt feel */
+.sidebar .brand {
+  align-items: flex-start;
+  padding: 8px 10px;
+  background: var(--s-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 28px;
+  position: relative;
+}
+.sidebar .brand::before {
+  content: '● ● ●';
+  position: absolute;
+  top: 4px; right: 8px;
+  font-size: 6px;
+  letter-spacing: 2px;
+  color: var(--faint);
+}
+.sidebar .avatar {
+  width: 32px; height: 32px;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+  background: var(--ink);
+}
+.sidebar .brand-title::before {
+  content: '$ ';
+  color: var(--s-kw);
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+.sidebar .brand-title {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+}
+.sidebar .brand-tagline { color: var(--s-com); }
+.sidebar .brand-tagline::after {
+  content: '▍';
+  margin-left: 2px;
+  color: var(--ink);
+  animation: term-blink 1.1s steps(2) infinite;
+}
+@keyframes term-blink { 50% { opacity: 0; } }
+
+/* Nav items — show keyboard hint on hover */
+.nav-item {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  position: relative;
+}
+.nav-item::before {
+  content: '';
+  display: inline-block;
+  width: 4px; height: 4px;
+  background: transparent;
+  border-radius: 50%;
+  margin-right: -4px;
+  flex-shrink: 0;
+}
+.nav-item.active::before {
+  background: var(--bg);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+
+/* Sidebar status line */
+.sidebar-status {
+  margin-top: 14px;
+  padding: 8px 10px;
+  background: var(--s-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--s-com);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.sidebar-status .row { display: flex; justify-content: space-between; }
+.sidebar-status .ok { color: var(--s-str); }
+.sidebar-status .key { color: var(--muted); }
+
+/* Top bar: a status pill on the right */
+.topbar-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--bg-soft);
+}
+.topbar-pill::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--s-str);
+  border-radius: 50%;
+  box-shadow: 0 0 6px color-mix(in oklab, var(--s-str) 70%, transparent);
+}
+html[data-theme='dark'] .topbar-pill::before { box-shadow: 0 0 6px color-mix(in oklab, #a8c38a 70%, transparent); }
+
+/* Breadcrumb: prefix with prompt symbol */
+.breadcrumb::before {
+  content: '$';
+  color: var(--s-kw);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  margin-right: 4px;
+}
+.breadcrumb svg:first-of-type { display: none; }
+
+/* Page heads: $ prompt + cursor */
+.page-head { position: relative; }
+.page-kicker {
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.page-kicker::before {
+  content: '$';
+  color: var(--s-kw);
+  margin-right: 0;
+}
+.page-title {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+}
+.page-title::after {
+  content: '▍';
+  display: inline-block;
+  margin-left: 4px;
+  color: var(--ink);
+  animation: term-blink 1.1s steps(2) infinite;
+  font-weight: 400;
+}
+
+/* Right panel section titles get $ prefix */
+.rp-title::before {
+  content: '$' !important;
+  width: auto !important;
+  height: auto !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  color: var(--s-kw);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.related-title::before { content: '$' !important; width: auto !important; height: auto !important; background: transparent !important; color: var(--s-kw); }
+
+/* Article cards: prompt prefix on title hover, ASCII underline */
+.article-list { padding-top: 4px; }
+.article-card {
+  border-bottom-style: solid;
+  border-bottom-color: var(--border-soft);
+}
+.article-card .article-title {
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  position: relative;
+}
+.article-card:hover .article-title::before {
+  content: '> ';
+  color: var(--s-kw);
+  position: absolute;
+  left: -18px;
+}
+.article-card.pinned::before {
+  content: '@pinned';
+  position: absolute;
+  top: 8px; right: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--s-kw);
+  background: var(--surface);
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+/* Article page title in mono */
+.article-page-title {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: -0.005em;
+  line-height: 1.35;
+}
+
+/* Article page: small "session" line */
+.article-session {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.article-session .prompt { color: var(--s-kw); }
+.article-session .arg { color: var(--s-str); }
+.article-session .flag { color: var(--s-num); }
+
+/* Headings inside prose: monospace + # */
+.prose h2, .prose h3, .prose h4, .prose h5 {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+.prose h2 { font-size: 20px; }
+.prose h3 { font-size: 16px; }
+.prose h2::before { content: '## '; color: var(--s-kw); }
+.prose h3::before { content: '### '; color: var(--s-kw); opacity: 0.8; }
+.prose h4::before { content: '#### '; color: var(--s-kw); opacity: 0.6; }
+
+/* Code chrome — tighter + subtle dot */
+.codeblock-chrome::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--s-kw);
+  border-radius: 50%;
+  margin-right: 8px;
+  opacity: 0.6;
+}
+
+/* Inline code with backticks */
+.prose :not(pre) > code::before { content: '`'; color: var(--s-com); }
+.prose :not(pre) > code::after { content: '`'; color: var(--s-com); }
+
+/* Archive year: $ prefix */
+.archive-year-num {
+  font-family: var(--font-mono);
+  font-size: 26px;
+}
+.archive-year-num::before {
+  content: 'logs/';
+  color: var(--s-kw);
+  font-size: 14px;
+  margin-right: 2px;
+  vertical-align: 6px;
+}
+.archive-title { font-family: var(--font-mono); font-size: 13px; }
+.archive-date { color: var(--s-com); }
+
+/* Category names already had # — emphasize */
+.cat-name { color: var(--ink); }
+.cat-name::before { color: var(--s-kw); }
+
+/* Tag pills: $-style monospace underscore */
+.tag-big {
+  font-weight: 500;
+}
+
+/* Pagination as terminal command */
+.pagination {
+  border-top: 1px dashed var(--border);
+  margin-top: 32px;
+  padding-top: 24px;
+}
+.page-btn {
+  font-weight: 500;
+}
+
+/* About: prompt-style */
+.about-name {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 22px;
+}
+.about-name::before { content: '@ '; color: var(--s-kw); }
+
+/* Search box: terminal frame */
+.search-box {
+  font-family: var(--font-mono);
+}
+.search-box::before {
+  content: '/';
+  color: var(--s-kw);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  margin-right: 0;
+}
+.search-box svg { display: none; }
+.search-box input { font-family: var(--font-mono); font-size: 12px; }
+
+/* 404 already terminal — strengthen */
+.err-glyph {
+  font-family: var(--font-mono);
+}
+
+/* Decorative ASCII section divider */
+.ascii-rule {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--faint);
+  letter-spacing: -0.5px;
+  user-select: none;
+  margin: 4px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Dark mode tweaks for terminal feel */
+html[data-theme='dark'] body {
+  background:
+    radial-gradient(ellipse at top, oklch(0.18 0.01 80) 0%, var(--bg) 60%);
+}
+
+/* Subtle scanlines on page-head in dark mode (optional, very faint) */
+html[data-theme='dark'] .page-head::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 3px,
+    rgba(255,255,255,0.012) 3px,
+    rgba(255,255,255,0.012) 4px
+  );
+}
+
+/* TOC: prompt prefix */
+.toc-item a::before {
+  content: '·';
+  color: var(--s-com);
+  margin-right: 6px;
+}
+.toc-item.active a::before { content: '▸'; color: var(--s-kw); }
