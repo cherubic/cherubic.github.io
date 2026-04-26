@@ -32,27 +32,33 @@ const minutes = getReadingTime(body);
 const catLabel = categories[0] ?? '';
 ---
 <BaseLayout title={title} description={description} image={image} toc={toc}>
-  <article class="post-wrap">
+  <article class="article-page">
     <!-- Article header -->
-    <header class="post-header">
-      {catLabel && <p class="post-cat-label"># {catLabel}</p>}
-      <h1 class="post-title article-page-title">{title}</h1>
+    <header class="article-page-head">
+      {catLabel && <p class="article-page-cat">{catLabel}</p>}
+      <h1 class="article-page-title">{title}</h1>
       <p class="article-session">
         <span class="prompt">$</span>
         <span> cat </span>
         <span class="arg">posts/{slug}.md</span>
         <span class="flag"> --render</span>
       </p>
-      <div class="post-meta-bar">
-        <time datetime={date.toISOString()}>{date.toISOString().slice(0, 10)}</time>
-        {updated && <span> · 更新 {updated.toISOString().slice(0, 10)}</span>}
-        <span> · {authors.join(', ')}</span>
-        <span> · {minutes} min read</span>
+      <div class="article-info">
+        <span class="article-info-item">
+          <time datetime={date.toISOString()}>{date.toISOString().slice(0, 10)}</time>
+        </span>
+        {updated && (
+          <span class="article-info-item">更新 {updated.toISOString().slice(0, 10)}</span>
+        )}
+        <span class="article-info-item">{authors.join(', ')}</span>
+        <span class="article-info-item">{minutes} min read</span>
       </div>
     </header>
 
     {image && (
-      <img src={image} alt={title} class="post-hero-img" loading="lazy" />
+      <div class="post-hero">
+        <img src={image} alt={title} loading="lazy" style="max-width:100%;border-radius:var(--radius);border:1px solid var(--border);display:block;" />
+      </div>
     )}
 
     <!-- Prose content injected via slot -->

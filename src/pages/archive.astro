@@ -25,8 +25,8 @@ const years = Object.keys(byYear).map(Number).sort((a, b) => b - a);
       </div>
       <ul class="archive-list">
         {byYear[year].map(post => (
-          <li class="archive-item">
-            <a href={`/posts/${post.slug}`} style="display: contents;">
+          <li>
+            <a href={`/posts/${post.slug}`} class="archive-item">
               <time class="archive-date">{post.data.date.toISOString().slice(5, 10)}</time>
               <span class="archive-title">{post.data.title}</span>
             </a>

@@ -16,9 +16,9 @@ const giscusCategoryId = 'DIC_kwDONhqxXM4Cl1k3';
 ---
 
 <!-- 分类 + 标签 -->
-<div class="post-tags-row">
+<div class="article-tags-row">
   {categories.map(c => (
-    <a href="/categories" class="tag-pill cat-pill">{c}</a>
+    <a href="/categories" class="tag-pill">{c}</a>
   ))}
   {tags.map(t => (
     <a href={`/tags/${t}`} class="tag-pill">{t}</a>
@@ -26,7 +26,7 @@ const giscusCategoryId = 'DIC_kwDONhqxXM4Cl1k3';
 </div>
 
 <!-- 版权声明 -->
-<aside class="copyright">
+<aside class="article-copyright">
   <p>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 协议授权，转载请注明来源。</p>
 </aside>
 
@@ -38,30 +38,30 @@ const giscusCategoryId = 'DIC_kwDONhqxXM4Cl1k3';
 </div>
 
 <!-- 上 / 下篇 -->
-<nav class="post-nav" aria-label="文章导航">
+<nav class="prev-next" aria-label="文章导航">
   {prevPost && (
-    <a href={`/posts/${prevPost.slug}`} class="post-nav-prev">
-      <span class="nav-label">← 上一篇</span>
-      <span class="nav-title">{prevPost.data.title}</span>
+    <a href={`/posts/${prevPost.slug}`} class="pn-card">
+      <div class="pn-label">← 上一篇</div>
+      <div class="pn-title">{prevPost.data.title}</div>
     </a>
   )}
   {nextPost && (
-    <a href={`/posts/${nextPost.slug}`} class="post-nav-next">
-      <span class="nav-label">下一篇 →</span>
-      <span class="nav-title">{nextPost.data.title}</span>
+    <a href={`/posts/${nextPost.slug}`} class="pn-card next">
+      <div class="pn-label">下一篇 →</div>
+      <div class="pn-title">{nextPost.data.title}</div>
     </a>
   )}
 </nav>
 
 <!-- 相关文章 -->
 {relatedPosts && relatedPosts.length > 0 && (
-  <section class="related-posts">
+  <section class="related">
     <h3 class="related-title">相关文章</h3>
     <div class="related-grid">
       {relatedPosts.slice(0, 3).map(r => (
         <a href={`/posts/${r.slug}`} class="related-card">
-          <time class="card-date">{r.data.date.toISOString().slice(0, 10)}</time>
-          <p class="related-title-text">{r.data.title}</p>
+          <time class="rc-date">{r.data.date.toISOString().slice(0, 10)}</time>
+          <p class="rc-title">{r.data.title}</p>
         </a>
       ))}
     </div>

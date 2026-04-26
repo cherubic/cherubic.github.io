@@ -30,8 +30,11 @@
   align-items: baseline;
   cursor: pointer;
   transition: padding-left 0.15s;
+  color: inherit;
+  text-decoration: none;
 }
 .archive-item:hover { padding-left: 8px; }
+.archive-item:hover .archive-title { color: var(--ink); }
 .archive-item:last-child { border-bottom: none; }
 .archive-date {
   font-family: var(--font-mono);
@@ -240,6 +243,21 @@
 }
 .err-terminal .prompt { color: var(--s-kw); }
 .err-terminal .err-line { color: var(--s-str); }
+
+/* Search close button */
+.search-close {
+  display: inline-flex; align-items: center;
+  padding: 2px 7px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.search-close:hover { color: var(--ink); border-color: var(--rule); }
 
 /* Search panel */
 .search-panel {
