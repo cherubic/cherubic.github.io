@@ -26,5 +26,11 @@ export default defineConfig({
         '@styles': '/src/styles',
       },
     },
+    build: {
+      rollupOptions: {
+        // pagefind is generated after astro build; don't bundle it
+        external: [/\/pagefind\//],
+      },
+    },
   },
 });
