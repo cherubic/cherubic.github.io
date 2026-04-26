@@ -18,6 +18,11 @@ package-lock.json
 .idea
 .vscode
 
+# Astro
+.astro/
+dist/
+.pnpmfile.cjs
+
 # Misc
 assets/js/dist
 
