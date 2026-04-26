@@ -1,0 +1,106 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props {
+  slug: string;
+  categories: string[];
+  tags: string[];
+  prevPost?: CollectionEntry<'posts'> | null;
+  nextPost?: CollectionEntry<'posts'> | null;
+  relatedPosts?: CollectionEntry<'posts'>[];
+}
+const { slug, categories, tags, prevPost, nextPost, relatedPosts } = Astro.props;
+const giscusRepo       = 'cherubic/cherubic.github.io';
+const giscusRepoId     = 'R_kgDONhqxXA';
+const giscusCategory   = 'Announcements';
+const giscusCategoryId = 'DIC_kwDONhqxXM4Cl1k3';
+---
+
+<!-- 分类 + 标签 -->
+<div class="post-tags-row">
+  {categories.map(c => (
+    <a href="/categories" class="tag-pill cat-pill">{c}</a>
+  ))}
+  {tags.map(t => (
+    <a href={`/tags/${t}`} class="tag-pill">{t}</a>
+  ))}
+</div>
+
+<!-- 版权声明 -->
+<aside class="copyright">
+  <p>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 协议授权，转载请注明来源。</p>
+</aside>
+
+<!-- 分享 -->
+<div class="share-row">
+  <span class="share-label">分享：</span>
+  <button class="share-btn" id="share-copy">复制链接</button>
+  <a class="share-btn" href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(`https://xandersu.com/posts/${slug}`)}`} target="_blank" rel="noopener noreferrer">Twitter</a>
+</div>
+
+<!-- 上 / 下篇 -->
+<nav class="post-nav" aria-label="文章导航">
+  {prevPost && (
+    <a href={`/posts/${prevPost.slug}`} class="post-nav-prev">
+      <span class="nav-label">← 上一篇</span>
+      <span class="nav-title">{prevPost.data.title}</span>
+    </a>
+  )}
+  {nextPost && (
+    <a href={`/posts/${nextPost.slug}`} class="post-nav-next">
+      <span class="nav-label">下一篇 →</span>
+      <span class="nav-title">{nextPost.data.title}</span>
+    </a>
+  )}
+</nav>
+
+<!-- 相关文章 -->
+{relatedPosts && relatedPosts.length > 0 && (
+  <section class="related-posts">
+    <h3 class="related-title">相关文章</h3>
+    <div class="related-grid">
+      {relatedPosts.slice(0, 3).map(r => (
+        <a href={`/posts/${r.slug}`} class="related-card">
+          <time class="card-date">{r.data.date.toISOString().slice(0, 10)}</time>
+          <p class="related-title-text">{r.data.title}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
+<!-- Giscus 评论 -->
+<div id="giscus-container" style="margin-top: 40px;">
+  <script
+    is:inline
+    src="https://giscus.app/client.js"
+    data-repo={giscusRepo}
+    data-repo-id={giscusRepoId}
+    data-category={giscusCategory}
+    data-category-id={giscusCategoryId}
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="bottom"
+    data-theme="preferred_color_scheme"
+    data-lang="zh-CN"
+    crossorigin="anonymous"
+    async
+  ></script>
+</div>
+
+<script>
+  document.getElementById('share-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = '链接已复制';
+      document.body.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.add('show'));
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 2000);
+    });
+  });
+</script>

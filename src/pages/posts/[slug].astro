@@ -1,0 +1,40 @@
+---
+import PostLayout from '@layouts/PostLayout.astro';
+import { buildTocFromHeadings } from '@utils/toc';
+import { getSortedPosts, getRelatedPosts } from '@utils/posts';
+
+export async function getStaticPaths() {
+  const sorted = await getSortedPosts();
+  return sorted.map((post, idx) => ({
+    params: { slug: post.slug },
+    props: {
+      post,
+      prevPost: sorted[idx + 1] ?? null,
+      nextPost: sorted[idx - 1] ?? null,
+    },
+  }));
+}
+
+const { post, prevPost, nextPost } = Astro.props;
+const { Content, headings } = await post.render();
+const toc = buildTocFromHeadings(headings);
+const related = await getRelatedPosts(post, 3);
+---
+<PostLayout
+  title={post.data.title}
+  date={post.data.date}
+  updated={post.data.updated}
+  categories={post.data.categories}
+  tags={post.data.tags}
+  authors={post.data.authors}
+  image={post.data.image}
+  description={post.data.description}
+  toc={toc}
+  slug={post.slug}
+  body={post.body}
+  prevPost={prevPost}
+  nextPost={nextPost}
+  relatedPosts={related}
+>
+  <Content />
+</PostLayout>

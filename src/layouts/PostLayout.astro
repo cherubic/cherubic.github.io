@@ -1,0 +1,72 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PostFooter from '@components/post/PostFooter.astro';
+import { getReadingTime } from '@utils/posts';
+import type { TocItem } from '@utils/toc';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  title: string;
+  date: Date;
+  updated?: Date;
+  categories: string[];
+  tags: string[];
+  authors: string[];
+  image?: string;
+  description?: string;
+  toc: TocItem[];
+  slug: string;
+  body: string;
+  prevPost?: CollectionEntry<'posts'> | null;
+  nextPost?: CollectionEntry<'posts'> | null;
+  relatedPosts?: CollectionEntry<'posts'>[];
+}
+
+const {
+  title, date, updated, categories, tags, authors,
+  image, description, toc, slug, body,
+  prevPost, nextPost, relatedPosts,
+} = Astro.props;
+
+const minutes = getReadingTime(body);
+const catLabel = categories[0] ?? '';
+---
+<BaseLayout title={title} description={description} image={image} toc={toc}>
+  <article class="post-wrap">
+    <!-- Article header -->
+    <header class="post-header">
+      {catLabel && <p class="post-cat-label"># {catLabel}</p>}
+      <h1 class="post-title article-page-title">{title}</h1>
+      <p class="article-session">
+        <span class="prompt">$</span>
+        <span> cat </span>
+        <span class="arg">posts/{slug}.md</span>
+        <span class="flag"> --render</span>
+      </p>
+      <div class="post-meta-bar">
+        <time datetime={date.toISOString()}>{date.toISOString().slice(0, 10)}</time>
+        {updated && <span> · 更新 {updated.toISOString().slice(0, 10)}</span>}
+        <span> · {authors.join(', ')}</span>
+        <span> · {minutes} min read</span>
+      </div>
+    </header>
+
+    {image && (
+      <img src={image} alt={title} class="post-hero-img" loading="lazy" />
+    )}
+
+    <!-- Prose content injected via slot -->
+    <div class="prose">
+      <slot />
+    </div>
+
+    <PostFooter
+      slug={slug}
+      categories={categories}
+      tags={tags}
+      prevPost={prevPost}
+      nextPost={nextPost}
+      relatedPosts={relatedPosts}
+    />
+  </article>
+</BaseLayout>
