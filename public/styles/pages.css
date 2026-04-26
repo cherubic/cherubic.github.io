@@ -261,9 +261,9 @@
 
 /* Search panel */
 .search-panel {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
+  position: fixed;
+  top: 60px;
+  right: var(--gutter);
   width: 440px;
   max-width: calc(100vw - 40px);
   background: var(--bg-elevated);
