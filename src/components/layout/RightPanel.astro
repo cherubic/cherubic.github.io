@@ -1,0 +1,66 @@
+---
+import { getRecentPosts, getPopularTags } from '@utils/posts';
+import type { TocItem } from '@utils/toc';
+interface Props { toc?: TocItem[]; }
+const { toc } = Astro.props;
+const showToc = toc && toc.length > 0;
+const recentPosts = showToc ? [] : await getRecentPosts(5);
+const popularTags  = showToc ? [] : await getPopularTags(10);
+---
+
+<aside class="rightpanel">
+  {showToc ? (
+    <div class="rp-section">
+      <h3 class="rp-title">目录</h3>
+      <ul class="toc" id="toc-list">
+        {toc!.map(item => (
+          <li class={`toc-item h${item.depth}`}>
+            <a href={`#${item.id}`}>{item.text}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : (
+    <>
+      <div class="rp-section">
+        <h3 class="rp-title">最近更新</h3>
+        <ul class="rp-list">
+          {recentPosts.map(post => (
+            <li>
+              <a href={`/posts/${post.slug}`}>
+                {post.data.title}
+                <span class="rp-date">{post.data.date.toISOString().slice(0, 10)}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="rp-section">
+        <h3 class="rp-title">热门标签</h3>
+        <div class="tag-cloud">
+          {popularTags.map(({ tag, count }) => (
+            <a href={`/tags/${tag}`} class="tag-pill">
+              {tag}<span class="tag-count">{count}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </>
+  )}
+</aside>
+
+{showToc && (
+  <script>
+    const headings = document.querySelectorAll<HTMLElement>('.prose h2, .prose h3, .prose h4');
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const id = entry.target.getAttribute('id');
+        document.querySelectorAll('#toc-list .toc-item').forEach(li => li.classList.remove('active'));
+        document.querySelector(`#toc-list .toc-item a[href="#${id}"]`)
+          ?.parentElement?.classList.add('active');
+      }
+    }, { rootMargin: '-80px 0px -60% 0px' });
+    headings.forEach(h => observer.observe(h));
+  </script>
+)}
