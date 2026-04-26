@@ -1,0 +1,21 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getPopularTags } from '@utils/posts';
+const tags = await getPopularTags(200);
+---
+<BaseLayout title="标签">
+  <div class="page-head">
+    <p class="page-kicker">$ ls ~/tags</p>
+    <h1 class="page-title">标签</h1>
+    <p class="page-subtitle">{tags.length} 个标签</p>
+  </div>
+
+  <div class="tag-cloud-big">
+    {tags.map(({ tag, count }) => (
+      <a href={`/tags/${tag}`} class="tag-big">
+        <span class="tc-name">{tag}</span>
+        <span class="tc-count">{count}</span>
+      </a>
+    ))}
+  </div>
+</BaseLayout>

@@ -1,0 +1,38 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getSortedPosts } from '@utils/posts';
+const posts = await getSortedPosts();
+
+const byYear = posts.reduce<Record<number, typeof posts>>((acc, p) => {
+  const y = p.data.date.getFullYear();
+  (acc[y] ??= []).push(p);
+  return acc;
+}, {});
+const years = Object.keys(byYear).map(Number).sort((a, b) => b - a);
+---
+<BaseLayout title="归档">
+  <div class="page-head">
+    <p class="page-kicker">$ ls ~/logs</p>
+    <h1 class="page-title">归档</h1>
+    <p class="page-subtitle">{posts.length} 篇文章</p>
+  </div>
+
+  {years.map(year => (
+    <div class="archive-year">
+      <div class="archive-year-head">
+        <span class="archive-year-num">{year}</span>
+        <span class="archive-year-count">{byYear[year].length} posts</span>
+      </div>
+      <ul class="archive-list">
+        {byYear[year].map(post => (
+          <li class="archive-item">
+            <a href={`/posts/${post.slug}`} style="display: contents;">
+              <time class="archive-date">{post.data.date.toISOString().slice(5, 10)}</time>
+              <span class="archive-title">{post.data.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</BaseLayout>

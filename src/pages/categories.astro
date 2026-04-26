@@ -1,0 +1,49 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getCategoryTree } from '@utils/posts';
+const tree = await getCategoryTree();
+---
+<BaseLayout title="分类">
+  <div class="page-head">
+    <p class="page-kicker">$ ls ~/categories</p>
+    <h1 class="page-title">分类</h1>
+  </div>
+
+  <ul class="cat-tree">
+    {tree.map(node => (
+      <li class="cat-node">
+        <div class="cat-row" data-has-children={node.children.length > 0 ? 'true' : 'false'}>
+          <span class={`cat-caret ${node.children.length > 0 ? '' : 'leaf'}`}>▶</span>
+          <span class="cat-name">{node.name}</span>
+          <span class="cat-count">{node.count}</span>
+        </div>
+        {node.children.length > 0 && (
+          <ul class="cat-children" hidden>
+            {node.children.map(child => (
+              <li class="cat-node">
+                <div class="cat-row">
+                  <span class="cat-caret leaf"></span>
+                  <span class="cat-name">{child.name}</span>
+                  <span class="cat-count">{child.count}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.cat-row[data-has-children="true"]').forEach(row => {
+    row.addEventListener('click', () => {
+      const children = row.nextElementSibling as HTMLElement | null;
+      const caret = row.querySelector('.cat-caret') as HTMLElement | null;
+      if (!children) return;
+      const isHidden = children.hasAttribute('hidden');
+      isHidden ? children.removeAttribute('hidden') : children.setAttribute('hidden', '');
+      caret?.classList.toggle('open', isHidden);
+    });
+  });
+</script>

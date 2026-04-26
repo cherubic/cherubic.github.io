@@ -1,0 +1,16 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+<BaseLayout title="404 Not Found">
+  <div class="err-page">
+    <div class="err-glyph">404</div>
+    <h1 class="err-title">页面不存在</h1>
+    <p class="err-msg">你访问的地址不存在或已被删除。</p>
+    <div class="err-terminal">
+      <div><span class="prompt">$ </span>ls ./not-found</div>
+      <div class="err-line">ls: cannot access './not-found': No such file or directory</div>
+      <div><span class="prompt">$ </span>cd ~</div>
+    </div>
+    <a href="/" class="page-btn">← 回到首页</a>
+  </div>
+</BaseLayout>

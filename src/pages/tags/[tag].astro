@@ -1,0 +1,26 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ArticleCard from '@components/ui/ArticleCard.astro';
+import { getCollection } from 'astro:content';
+import { getPostsByTag } from '@utils/posts';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  const tagSet = new Set(posts.flatMap(p => p.data.tags));
+  return [...tagSet].map(tag => ({ params: { tag } }));
+}
+
+const { tag } = Astro.params;
+const posts = await getPostsByTag(tag);
+---
+<BaseLayout title={`#${tag}`}>
+  <div class="page-head">
+    <p class="page-kicker">$ grep -r "{tag}" ~/posts</p>
+    <h1 class="page-title">#{tag}</h1>
+    <p class="page-subtitle">{posts.length} 篇文章</p>
+  </div>
+
+  <div class="article-list">
+    {posts.map(post => <ArticleCard post={post} />)}
+  </div>
+</BaseLayout>
