@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync, readdirSync } from 'fs';
-import { join, basename } from 'path';
+import { join } from 'path';
 import matter from 'gray-matter';
 
 const srcDir  = join(process.cwd(), '_posts');

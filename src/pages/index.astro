@@ -1,0 +1,24 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ArticleCard from '@components/ui/ArticleCard.astro';
+import { getSortedPosts, paginatePosts } from '@utils/posts';
+const allPosts = await getSortedPosts();
+const { posts, totalPages } = paginatePosts(allPosts, 1, 10);
+---
+<BaseLayout title="首页">
+  <div class="page-head">
+    <p class="page-kicker">$ ls ~/posts</p>
+    <h1 class="page-title">所有文章</h1>
+    <p class="page-subtitle">{allPosts.length} 篇文章</p>
+  </div>
+
+  <div class="article-list">
+    {posts.map(post => <ArticleCard post={post} />)}
+  </div>
+
+  {totalPages > 1 && (
+    <nav class="pagination" aria-label="分页">
+      <a href="/page/2" class="page-btn">下一页 →</a>
+    </nav>
+  )}
+</BaseLayout>

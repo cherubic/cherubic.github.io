@@ -1,0 +1,24 @@
+---
+import { getReadingTime } from '@utils/posts';
+import type { CollectionEntry } from 'astro:content';
+interface Props { post: CollectionEntry<'posts'>; }
+const { post } = Astro.props;
+const minutes  = getReadingTime(post.body ?? '');
+const dateStr  = post.data.date.toISOString().slice(0, 10);
+---
+
+<article class={`article-card${post.data.pin ? ' pinned' : ''}`}>
+  <a href={`/posts/${post.slug}`} class="card-link">
+    <div class="article-meta">
+      <time class="article-date" datetime={dateStr}>{dateStr}</time>
+      {post.data.categories[0] && (
+        <span class="article-cat">{post.data.categories[0]}</span>
+      )}
+      <span class="article-read">{minutes} min read</span>
+    </div>
+    <h2 class="article-title">{post.data.title}</h2>
+    {post.data.description && (
+      <p class="article-excerpt">{post.data.description}</p>
+    )}
+  </a>
+</article>

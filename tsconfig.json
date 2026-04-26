@@ -8,5 +8,13 @@
       "@utils/*": ["src/utils/*"],
       "@styles/*": ["src/styles/*"]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "assets",
+    "_javascript",
+    "_plugins",
+    "scripts"
+  ]
 }
