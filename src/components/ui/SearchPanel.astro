@@ -44,20 +44,26 @@
     }
   });
 
-  // Lazy-load Pagefind
-  let pagefind: Record<string, (...args: unknown[]) => unknown> | null = null;
+  // Load and init Pagefind — returns the same Promise on repeated calls
+  let pagefindReady: Promise<Record<string, (...args: unknown[]) => unknown> | null> | null = null;
 
-  async function ensurePagefind() {
-    if (pagefind) return pagefind;
-    try {
-      // @ts-expect-error pagefind is generated at build time
-      pagefind = await import('/pagefind/pagefind.js') as Record<string, (...args: unknown[]) => unknown>;
-      (pagefind.init as () => void)();
-    } catch {
-      pagefind = null;
-    }
-    return pagefind;
+  function ensurePagefind() {
+    if (pagefindReady) return pagefindReady;
+    pagefindReady = (async () => {
+      try {
+        // @ts-expect-error pagefind is generated at build time
+        const pf = await import('/pagefind/pagefind.js') as Record<string, (...args: unknown[]) => unknown>;
+        await (pf.init as () => Promise<void>)();
+        return pf;
+      } catch {
+        return null;
+      }
+    })();
+    return pagefindReady;
   }
+
+  // Preload index on input focus so first search is instant
+  input.addEventListener('focus', () => ensurePagefind(), { once: true });
 
   function buildResultNode(r: Record<string, unknown>): HTMLAnchorElement {
     const a = document.createElement('a');

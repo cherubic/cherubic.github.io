@@ -3,7 +3,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 ---
 <BaseLayout title="搜索">
   <div class="page-head">
-    <p class="page-kicker">$ grep -r</p>
+    <p class="page-kicker">grep -r</p>
     <h1 class="page-title">搜索</h1>
   </div>
 
@@ -27,21 +27,28 @@ import BaseLayout from '@layouts/BaseLayout.astro';
   const results = document.getElementById('search-page-results') as HTMLElement | null;
   if (!input || !results) return;
 
-  // Pre-fill from ?q=
   const q0 = new URLSearchParams(location.search).get('q') ?? '';
-  if (q0) { input.value = q0; input.focus(); }
+  if (q0) { input.value = q0; }
 
-  let pagefind: Record<string, (...args: unknown[]) => unknown> | null = null;
+  let pagefindReady: Promise<Record<string, (...args: unknown[]) => unknown> | null> | null = null;
 
-  async function ensurePagefind() {
-    if (pagefind) return pagefind;
-    try {
-      // @ts-expect-error pagefind is generated at build time
-      pagefind = await import('/pagefind/pagefind.js') as Record<string, (...args: unknown[]) => unknown>;
-      (pagefind.init as () => void)();
-    } catch { pagefind = null; }
-    return pagefind;
+  function loadPagefind() {
+    if (pagefindReady) return pagefindReady;
+    pagefindReady = (async () => {
+      try {
+        // @ts-expect-error pagefind is generated at build time
+        const pf = await import('/pagefind/pagefind.js') as Record<string, (...args: unknown[]) => unknown>;
+        await (pf.init as () => Promise<void>)();
+        return pf;
+      } catch {
+        return null;
+      }
+    })();
+    return pagefindReady;
   }
+
+  // Preload index as soon as the page is ready
+  loadPagefind();
 
   function clearResults() {
     while (results!.firstChild) results!.removeChild(results!.firstChild);
@@ -49,7 +56,6 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 
   function buildCard(r: Record<string, unknown>): HTMLElement {
     const meta = r.meta as Record<string, string> | undefined;
-
     const a = document.createElement('a');
     a.className = 'sp-card';
     a.href = String(r.url ?? '/');
@@ -77,13 +83,11 @@ import BaseLayout from '@layouts/BaseLayout.astro';
   async function runSearch(q: string) {
     clearResults();
     if (!q) return;
-
-    // Update URL without reload
     const url = new URL(location.href);
     url.searchParams.set('q', q);
     history.replaceState(null, '', url.toString());
 
-    const pf = await ensurePagefind();
+    const pf = await loadPagefind();
     if (!pf) { results!.appendChild(buildEmpty(q)); return; }
 
     const res = await (pf.search as (q: string) => Promise<{ results: unknown[] }>)(q);
@@ -101,66 +105,9 @@ import BaseLayout from '@layouts/BaseLayout.astro';
     timer = window.setTimeout(() => runSearch(input.value.trim()), 150);
   });
 
-  if (q0) runSearch(q0);
+  if (q0) {
+    input.focus();
+    runSearch(q0);
+  }
 })();
 </script>
-
-<style>
-.search-page { padding: 12px 0 80px; }
-.search-page-box {
-  margin-bottom: 24px;
-  position: relative;
-}
-.search-page-input {
-  width: 100%;
-  padding: 12px 16px;
-  font-family: var(--font-mono);
-  font-size: 15px;
-  color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  outline: none;
-  transition: border-color 0.12s;
-}
-.search-page-input::placeholder { color: var(--muted-2); }
-.search-page-input:focus { border-color: var(--rule); }
-
-.search-page-results { display: flex; flex-direction: column; gap: 10px; }
-
-.sp-card {
-  display: block;
-  padding: 14px 16px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  text-decoration: none;
-  color: inherit;
-  transition: border-color 0.12s, transform 0.1s;
-}
-.sp-card:hover { border-color: var(--rule); transform: translateX(4px); }
-.sp-title {
-  font-size: 15px;
-  font-weight: 600;
-  font-family: var(--font-mono);
-  color: var(--ink);
-  margin-bottom: 6px;
-  line-height: 1.35;
-}
-.sp-excerpt {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.sp-empty {
-  padding: 60px 0;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--muted);
-}
-</style>
