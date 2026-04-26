@@ -1,29 +1,38 @@
 ---
 import { getCollection } from 'astro:content';
+import { useTranslations } from '@utils/i18n';
+
 interface Props { currentPath: string; }
 const { currentPath } = Astro.props;
+const t = useTranslations(Astro.currentLocale);
 const posts = await getCollection('posts');
 const postCount = posts.length;
 
+const prefix = Astro.currentLocale === 'en' ? '/en' : '';
 const navItems = [
-  { href: '/',            label: '首页',  icon: 'home',    count: postCount },
-  { href: '/archive',     label: '归档',  icon: 'archive', count: null },
-  { href: '/categories',  label: '分类',  icon: 'folder',  count: null },
-  { href: '/tags',        label: '标签',  icon: 'tag',     count: null },
-  { href: '/about',       label: '关于',  icon: 'user',    count: null },
+  { href: prefix + '/',            label: t('nav.home'),       icon: 'home',    count: postCount },
+  { href: prefix + '/archive',     label: t('nav.archive'),    icon: 'archive', count: null },
+  { href: prefix + '/categories',  label: t('nav.categories'), icon: 'folder',  count: null },
+  { href: prefix + '/tags',        label: t('nav.tags'),       icon: 'tag',     count: null },
+  { href: prefix + '/about',       label: t('nav.about'),      icon: 'user',    count: null },
 ];
 
 function isActive(href: string) {
-  if (href === '/') return currentPath === '/';
+  if (href === prefix + '/') return currentPath === '/' || currentPath === '/en/';
   return currentPath.startsWith(href);
 }
 
 const buildDate = new Date().toISOString().slice(0, 10);
+
+// Language switcher target
+const isEn = Astro.currentLocale === 'en';
+const rawPath = isEn ? currentPath.replace(/^\/en/, '') || '/' : currentPath;
+const switchHref = isEn ? rawPath : '/en' + rawPath;
+const switchLabel = t('lang.switch');
 ---
 
 <nav class="sidebar" id="sidebar" aria-label="主导航">
-  <!-- Brand / terminal panel -->
-  <a href="/" class="brand">
+  <a href={prefix + '/'} class="brand">
     <div class="avatar">X</div>
     <div class="brand-text">
       <div class="brand-title">~/wuxie</div>
@@ -31,29 +40,24 @@ const buildDate = new Date().toISOString().slice(0, 10);
     </div>
   </a>
 
-  <!-- Sidebar status -->
   <div class="sidebar-status">
     <div class="row">
-      <span class="key">status</span>
-      <span class="ok">● online</span>
+      <span class="key">{t('sidebar.status')}</span>
+      <span class="ok">{t('sidebar.online')}</span>
     </div>
     <div class="row">
-      <span class="key">posts</span>
+      <span class="key">{t('sidebar.posts')}</span>
       <span>{postCount}</span>
     </div>
     <div class="row">
-      <span class="key">build</span>
+      <span class="key">{t('sidebar.build')}</span>
       <span>{buildDate}</span>
     </div>
   </div>
 
-  <!-- Navigation -->
   <nav class="nav" style="margin-top: 20px;">
     {navItems.map(item => (
-      <a
-        href={item.href}
-        class={`nav-item${isActive(item.href) ? ' active' : ''}`}
-      >
+      <a href={item.href} class={`nav-item${isActive(item.href) ? ' active' : ''}`}>
         <span class="nav-icon" aria-hidden="true">
           {item.icon === 'home'    && <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L1 7h2v7h4v-4h2v4h4V7h2L8 1z"/></svg>}
           {item.icon === 'archive' && <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2h14v3H1V2zm1 4h12v9H2V6zm3 2v1h6V8H5z"/></svg>}
@@ -67,7 +71,6 @@ const buildDate = new Date().toISOString().slice(0, 10);
     ))}
   </nav>
 
-  <!-- Footer: theme toggle + social icons -->
   <div class="sidebar-footer">
     <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
       <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -76,13 +79,17 @@ const buildDate = new Date().toISOString().slice(0, 10);
       </svg>
       <span id="theme-label">light</span>
     </button>
-    <div class="social-icons">
-      <a href="https://github.com/cherubic" class="social-icon" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.6 0 0 3.6 0 8c0 3.5 2.3 6.5 5.5 7.6.4.1.5-.2.5-.4v-1.4c-2.2.5-2.7-1.1-2.7-1.1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.2 1.9.9 2.3.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8.6-.2 1.3-.3 2-.3s1.4.1 2 .3c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.8-3.7 4 .3.3.6.8.6 1.6v2.3c0 .2.1.5.5.4C13.7 14.5 16 11.5 16 8c0-4.4-3.6-8-8-8z"/></svg>
-      </a>
-      <a href="/feed.xml" class="social-icon" aria-label="RSS">
-        <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="3" cy="13" r="1.5"/><path d="M2 7.5A6.5 6.5 0 0 1 8.5 14" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M2 3.5A10.5 10.5 0 0 1 12.5 14" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
-      </a>
+
+    <div class="sidebar-footer-right">
+      <a href={switchHref} class="lang-toggle" aria-label="切换语言">{switchLabel}</a>
+      <div class="social-icons">
+        <a href="https://github.com/cherubic" class="social-icon" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.6 0 0 3.6 0 8c0 3.5 2.3 6.5 5.5 7.6.4.1.5-.2.5-.4v-1.4c-2.2.5-2.7-1.1-2.7-1.1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.2 1.9.9 2.3.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8.6-.2 1.3-.3 2-.3s1.4.1 2 .3c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.8-3.7 4 .3.3.6.8.6 1.6v2.3c0 .2.1.5.5.4C13.7 14.5 16 11.5 16 8c0-4.4-3.6-8-8-8z"/></svg>
+        </a>
+        <a href="/feed.xml" class="social-icon" aria-label="RSS">
+          <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="3" cy="13" r="1.5"/><path d="M2 7.5A6.5 6.5 0 0 1 8.5 14" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M2 3.5A10.5 10.5 0 0 1 12.5 14" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        </a>
+      </div>
     </div>
   </div>
 </nav>
@@ -104,8 +111,6 @@ const buildDate = new Date().toISOString().slice(0, 10);
     html.dataset.theme = next;
     localStorage.setItem('theme', next);
     syncLabel();
-
-    // Sync Giscus if present
     const giscus = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
     giscus?.contentWindow?.postMessage(
       { giscus: { setConfig: { theme: next === 'dark' ? 'dark_dimmed' : 'light' } } },

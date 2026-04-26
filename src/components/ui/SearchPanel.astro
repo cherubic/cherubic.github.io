@@ -1,11 +1,27 @@
 ---
-// SearchPanel — inline dropdown, anchored to .search-wrap
+interface Props {
+  msgAll: string;
+  msgEmptyPre: string;
+  msgEmptySuf: string;
+  searchHref: string;
+}
+const { msgAll, msgEmptyPre, msgEmptySuf, searchHref } = Astro.props;
 ---
 
-<div id="search-panel" class="search-panel" hidden role="listbox" aria-label="搜索结果">
+<div
+  id="search-panel"
+  class="search-panel"
+  hidden
+  role="listbox"
+  aria-label="搜索结果"
+  data-msg-all={msgAll}
+  data-msg-empty-pre={msgEmptyPre}
+  data-msg-empty-suf={msgEmptySuf}
+  data-search-href={searchHref}
+>
   <div id="search-results" class="search-results"></div>
-  <a id="search-all-link" href="/search" class="search-all-link" hidden>
-    查看全部结果 →
+  <a id="search-all-link" href={searchHref} class="search-all-link" hidden>
+    {msgAll}
   </a>
 </div>
 
@@ -18,11 +34,13 @@
 
   if (!panel || !resultsEl || !input) return;
 
+  const msgAll      = panel.dataset.msgAll ?? '查看全部结果 →';
+  const msgEmptyPre = panel.dataset.msgEmptyPre ?? '没有找到';
+  const msgEmptySuf = panel.dataset.msgEmptySuf ?? '的结果';
+  const searchHref  = panel.dataset.searchHref ?? '/search';
+
   function openPanel() { panel!.removeAttribute('hidden'); }
-  function closePanel() {
-    panel!.setAttribute('hidden', '');
-    clearResults();
-  }
+  function closePanel() { panel!.setAttribute('hidden', ''); clearResults(); }
   function clearResults() {
     while (resultsEl!.firstChild) resultsEl!.removeChild(resultsEl!.firstChild);
     allLink?.setAttribute('hidden', '');
@@ -31,20 +49,16 @@
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closePanel(); input?.blur(); return; }
     if ((e.key === '/' || (e.key === 'k' && (e.metaKey || e.ctrlKey))) && !e.isComposing) {
-      e.preventDefault();
-      input?.focus();
+      e.preventDefault(); input?.focus();
     }
   });
 
   document.addEventListener('click', e => {
     const target = e.target as Node;
     const wrap = input?.closest('.search-wrap');
-    if (panel && !panel.hasAttribute('hidden') && wrap && !wrap.contains(target)) {
-      closePanel();
-    }
+    if (panel && !panel.hasAttribute('hidden') && wrap && !wrap.contains(target)) closePanel();
   });
 
-  // Load and init Pagefind — returns the same Promise on repeated calls
   let pagefindReady: Promise<Record<string, (...args: unknown[]) => unknown> | null> | null = null;
 
   function ensurePagefind() {
@@ -55,14 +69,11 @@
         const pf = await import('/pagefind/pagefind.js') as Record<string, (...args: unknown[]) => unknown>;
         await (pf.init as () => Promise<void>)();
         return pf;
-      } catch {
-        return null;
-      }
+      } catch { return null; }
     })();
     return pagefindReady;
   }
 
-  // Preload index on input focus so first search is instant
   input.addEventListener('focus', () => ensurePagefind(), { once: true });
 
   function buildResultNode(r: Record<string, unknown>): HTMLAnchorElement {
@@ -70,34 +81,28 @@
     a.className = 'search-result';
     a.href = String(r.url ?? '/');
     a.setAttribute('role', 'option');
-
     const meta = r.meta as Record<string, string> | undefined;
-
     const titleDiv = document.createElement('div');
     titleDiv.className = 'search-result-title';
     titleDiv.textContent = meta?.title ?? '';
     a.appendChild(titleDiv);
-
     const excerptDiv = document.createElement('div');
     excerptDiv.className = 'search-result-excerpt';
     excerptDiv.textContent = String(r.excerpt ?? '');
     a.appendChild(excerptDiv);
-
     return a;
   }
 
   function buildEmptyNode(q: string): HTMLElement {
     const div = document.createElement('div');
     div.className = 'search-empty';
-    div.textContent = `没有找到 "${q}" 的结果`;
+    div.textContent = msgEmptySuf
+      ? `${msgEmptyPre} "${q}" ${msgEmptySuf}`
+      : `${msgEmptyPre} "${q}"`;
     return div;
   }
 
   let debounceTimer = 0;
-
-  input.addEventListener('focus', () => {
-    if (input.value.trim()) openPanel();
-  });
 
   input.addEventListener('input', () => {
     clearTimeout(debounceTimer);
@@ -106,21 +111,19 @@
       clearResults();
       if (!q) { closePanel(); return; }
       openPanel();
-
       const pf = await ensurePagefind();
       if (!pf) { resultsEl!.appendChild(buildEmptyNode(q)); return; }
-
       const res = await (pf.search as (q: string) => Promise<{ results: unknown[] }>)(q);
       const top = await Promise.all(
         res.results.slice(0, 6).map((r: unknown) => (r as { data: () => Promise<Record<string, unknown>> }).data()),
       );
-
       if (top.length === 0) {
         resultsEl!.appendChild(buildEmptyNode(q));
       } else {
         top.forEach(r => resultsEl!.appendChild(buildResultNode(r)));
         if (allLink) {
-          allLink.href = `/search?q=${encodeURIComponent(q)}`;
+          allLink.href = `${searchHref}?q=${encodeURIComponent(q)}`;
+          allLink.textContent = msgAll;
           allLink.removeAttribute('hidden');
         }
       }

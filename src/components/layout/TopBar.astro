@@ -1,9 +1,11 @@
 ---
 import SearchPanel from '@components/ui/SearchPanel.astro';
+import { useTranslations } from '@utils/i18n';
+
 interface Props { currentPath: string; }
 const { currentPath } = Astro.props;
+const t = useTranslations(Astro.currentLocale);
 
-// Build breadcrumb segments from path
 const segments = currentPath.split('/').filter(Boolean);
 const crumbs: Array<{ label: string; href: string }> = [];
 let acc = '';
@@ -14,7 +16,6 @@ for (const seg of segments) {
 ---
 
 <div class="topbar">
-  <!-- Mobile hamburger -->
   <button class="mobile-toggle" id="mobile-toggle" aria-label="打开菜单">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
       <rect y="2"  width="16" height="2" rx="1"/>
@@ -23,7 +24,6 @@ for (const seg of segments) {
     </svg>
   </button>
 
-  <!-- Breadcrumb -->
   <nav class="breadcrumb" aria-label="面包屑">
     <a href="/">~</a>
     {crumbs.map((crumb, i) => (
@@ -37,16 +37,14 @@ for (const seg of segments) {
     ))}
   </nav>
 
-  <!-- Status pill -->
-  <span class="topbar-pill">deploy: ok</span>
+  <span class="topbar-pill">{t('topbar.deploy')}</span>
 
-  <!-- Search -->
   <div class="search-wrap">
     <div class="search-box" aria-label="搜索">
       <input
         type="text"
         id="search-input"
-        placeholder="搜索文章…"
+        placeholder={t('topbar.search')}
         autocomplete="off"
         aria-autocomplete="list"
         aria-controls="search-panel"
@@ -54,6 +52,11 @@ for (const seg of segments) {
       />
       <kbd class="search-kbd">⌘K</kbd>
     </div>
-    <SearchPanel />
+    <SearchPanel
+      msgAll={t('search.all')}
+      msgEmptyPre={t('search.empty_pre')}
+      msgEmptySuf={t('search.empty_suf')}
+      searchHref={Astro.currentLocale === 'en' ? '/en/search' : '/search'}
+    />
   </div>
 </div>

@@ -30,10 +30,10 @@ const { posts, totalPages } = paginatePosts(allPosts, page, 10);
 
   <nav class="pagination" aria-label="pagination">
     {page > 1 && (
-      <a href={page === 2 ? '/' : `/page/${page - 1}`} class="page-btn">{t('page.prev')}</a>
+      <a href={page === 2 ? '/en/' : `/en/page/${page - 1}`} class="page-btn">{t('page.prev')}</a>
     )}
     {page < totalPages && (
-      <a href={`/page/${page + 1}`} class="page-btn">{t('page.next')}</a>
+      <a href={`/en/page/${page + 1}`} class="page-btn">{t('page.next')}</a>
     )}
   </nav>
 </BaseLayout>

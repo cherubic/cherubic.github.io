@@ -1,5 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { useTranslations } from '@utils/i18n';
+
 interface Props {
   slug: string;
   categories: string[];
@@ -9,6 +11,8 @@ interface Props {
   relatedPosts?: CollectionEntry<'posts'>[];
 }
 const { slug, categories, tags, prevPost, nextPost, relatedPosts } = Astro.props;
+const t = useTranslations(Astro.currentLocale);
+
 const giscusRepo       = 'cherubic/cherubic.github.io';
 const giscusRepoId     = 'R_kgDONhqxXA';
 const giscusCategory   = 'Announcements';
@@ -20,20 +24,20 @@ const giscusCategoryId = 'DIC_kwDONhqxXM4Cl1k3';
   {categories.map(c => (
     <a href="/categories" class="tag-pill">{c}</a>
   ))}
-  {tags.map(t => (
-    <a href={`/tags/${t}`} class="tag-pill">{t}</a>
+  {tags.map(tag => (
+    <a href={`/tags/${tag}`} class="tag-pill">{tag}</a>
   ))}
 </div>
 
 <!-- 版权声明 -->
 <aside class="article-copyright">
-  <p>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 协议授权，转载请注明来源。</p>
+  <p>{t('post.copyright')}</p>
 </aside>
 
 <!-- 分享 -->
 <div class="share-row">
-  <span class="share-label">分享：</span>
-  <button class="share-btn" id="share-copy">复制链接</button>
+  <span class="share-label">{t('post.share')}</span>
+  <button class="share-btn" id="share-copy" data-copied-msg={t('post.copied')}>{t('post.copy')}</button>
   <a class="share-btn" href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(`https://xandersu.com/posts/${slug}`)}`} target="_blank" rel="noopener noreferrer">Twitter</a>
 </div>
 
@@ -41,13 +45,13 @@ const giscusCategoryId = 'DIC_kwDONhqxXM4Cl1k3';
 <nav class="prev-next" aria-label="文章导航">
   {prevPost && (
     <a href={`/posts/${prevPost.slug}`} class="pn-card">
-      <div class="pn-label">← 上一篇</div>
+      <div class="pn-label">{t('post.prev')}</div>
       <div class="pn-title">{prevPost.data.title}</div>
     </a>
   )}
   {nextPost && (
     <a href={`/posts/${nextPost.slug}`} class="pn-card next">
-      <div class="pn-label">下一篇 →</div>
+      <div class="pn-label">{t('post.next')}</div>
       <div class="pn-title">{nextPost.data.title}</div>
     </a>
   )}
@@ -56,7 +60,7 @@ const giscusCategoryId = 'DIC_kwDONhqxXM4Cl1k3';
 <!-- 相关文章 -->
 {relatedPosts && relatedPosts.length > 0 && (
   <section class="related">
-    <h3 class="related-title">相关文章</h3>
+    <h3 class="related-title">{t('post.related')}</h3>
     <div class="related-grid">
       {relatedPosts.slice(0, 3).map(r => (
         <a href={`/posts/${r.slug}`} class="related-card">
@@ -90,11 +94,13 @@ const giscusCategoryId = 'DIC_kwDONhqxXM4Cl1k3';
 </div>
 
 <script>
-  document.getElementById('share-copy')?.addEventListener('click', () => {
+  const btn = document.getElementById('share-copy');
+  const copiedMsg = btn?.dataset.copiedMsg ?? '链接已复制';
+  btn?.addEventListener('click', () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
       const toast = document.createElement('div');
       toast.className = 'toast';
-      toast.textContent = '链接已复制';
+      toast.textContent = copiedMsg;
       document.body.appendChild(toast);
       requestAnimationFrame(() => toast.classList.add('show'));
       setTimeout(() => {

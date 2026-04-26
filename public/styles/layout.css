@@ -98,6 +98,21 @@
   transition: all 0.12s;
 }
 .theme-toggle:hover { color: var(--ink); border-color: var(--rule); }
+.sidebar-footer-right { display: flex; align-items: center; gap: 4px; }
+.lang-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 4px 8px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.12s;
+  line-height: 1;
+}
+.lang-toggle:hover { color: var(--ink); border-color: var(--rule); }
 .social-icons { display: flex; gap: 2px; }
 .social-icon {
   width: 28px; height: 28px;

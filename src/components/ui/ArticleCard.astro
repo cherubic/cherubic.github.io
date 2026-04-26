@@ -1,10 +1,13 @@
 ---
 import { getReadingTime } from '@utils/posts';
+import { useTranslations } from '@utils/i18n';
 import type { CollectionEntry } from 'astro:content';
+
 interface Props { post: CollectionEntry<'posts'>; }
 const { post } = Astro.props;
-const minutes  = getReadingTime(post.body ?? '');
-const dateStr  = post.data.date.toISOString().slice(0, 10);
+const minutes = getReadingTime(post.body ?? '');
+const dateStr = post.data.date.toISOString().slice(0, 10);
+const t = useTranslations(Astro.currentLocale);
 ---
 
 <article class={`article-card${post.data.pin ? ' pinned' : ''}`}>
@@ -14,7 +17,7 @@ const dateStr  = post.data.date.toISOString().slice(0, 10);
       {post.data.categories[0] && (
         <span class="article-cat">{post.data.categories[0]}</span>
       )}
-      <span class="article-read">{minutes} min read</span>
+      <span class="article-read">{minutes} {t('post.min_read')}</span>
     </div>
     <h2 class="article-title">{post.data.title}</h2>
     {post.data.description && (

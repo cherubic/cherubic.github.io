@@ -1,8 +1,11 @@
 ---
 import { getRecentPosts, getPopularTags } from '@utils/posts';
+import { useTranslations } from '@utils/i18n';
 import type { TocItem } from '@utils/toc';
+
 interface Props { toc?: TocItem[]; }
 const { toc } = Astro.props;
+const t = useTranslations(Astro.currentLocale);
 const showToc = toc && toc.length > 0;
 const recentPosts = showToc ? [] : await getRecentPosts(5);
 const popularTags  = showToc ? [] : await getPopularTags(10);
@@ -11,7 +14,7 @@ const popularTags  = showToc ? [] : await getPopularTags(10);
 <aside class="rightpanel">
   {showToc ? (
     <div class="rp-section">
-      <h3 class="rp-title">目录</h3>
+      <h3 class="rp-title">{t('rp.toc')}</h3>
       <ul class="toc" id="toc-list">
         {toc!.map(item => (
           <li class={`toc-item h${item.depth}`}>
@@ -23,7 +26,7 @@ const popularTags  = showToc ? [] : await getPopularTags(10);
   ) : (
     <>
       <div class="rp-section">
-        <h3 class="rp-title">最近更新</h3>
+        <h3 class="rp-title">{t('rp.recent')}</h3>
         <ul class="rp-list">
           {recentPosts.map(post => (
             <li>
@@ -36,7 +39,7 @@ const popularTags  = showToc ? [] : await getPopularTags(10);
         </ul>
       </div>
       <div class="rp-section">
-        <h3 class="rp-title">热门标签</h3>
+        <h3 class="rp-title">{t('rp.tags')}</h3>
         <div class="tag-cloud">
           {popularTags.map(({ tag, count }) => (
             <a href={`/tags/${tag}`} class="tag-pill">

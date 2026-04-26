@@ -2,6 +2,7 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import PostFooter from '@components/post/PostFooter.astro';
 import { getReadingTime } from '@utils/posts';
+import { useTranslations } from '@utils/i18n';
 import type { TocItem } from '@utils/toc';
 import type { CollectionEntry } from 'astro:content';
 
@@ -28,12 +29,12 @@ const {
   prevPost, nextPost, relatedPosts,
 } = Astro.props;
 
+const t = useTranslations(Astro.currentLocale);
 const minutes = getReadingTime(body);
 const catLabel = categories[0] ?? '';
 ---
 <BaseLayout title={title} description={description} image={image} toc={toc}>
   <article class="article-page">
-    <!-- Article header -->
     <header class="article-page-head">
       {catLabel && <p class="article-page-cat">{catLabel}</p>}
       <h1 class="article-page-title">{title}</h1>
@@ -48,10 +49,10 @@ const catLabel = categories[0] ?? '';
           <time datetime={date.toISOString()}>{date.toISOString().slice(0, 10)}</time>
         </span>
         {updated && (
-          <span class="article-info-item">更新 {updated.toISOString().slice(0, 10)}</span>
+          <span class="article-info-item">{t('post.updated')} {updated.toISOString().slice(0, 10)}</span>
         )}
         <span class="article-info-item">{authors.join(', ')}</span>
-        <span class="article-info-item">{minutes} min read</span>
+        <span class="article-info-item">{minutes} {t('post.min_read')}</span>
       </div>
     </header>
 
@@ -61,7 +62,6 @@ const catLabel = categories[0] ?? '';
       </div>
     )}
 
-    <!-- Prose content injected via slot -->
     <div class="prose">
       <slot />
     </div>

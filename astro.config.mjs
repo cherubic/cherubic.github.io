@@ -8,6 +8,11 @@ import { rehypeCodeblock } from './plugins/rehype-codeblock.mjs';
 export default defineConfig({
   site: 'https://xandersu.com',
   integrations: [mdx(), sitemap()],
+  i18n: {
+    defaultLocale: 'zh',
+    locales: ['zh', 'en'],
+    routing: { prefixDefaultLocale: false },
+  },
   markdown: {
     shikiConfig: {
       theme: 'github-dark',
